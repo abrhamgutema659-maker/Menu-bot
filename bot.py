@@ -53,7 +53,6 @@ async def send_tour(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
 
     videos = [
-        "videos/19034.mp4",
         "videos/apartment_tour_1_15sec-2.mp4",
         "videos/apartment_tour_2_15sec.mp4",
         "videos/apartment_tour_3_10sec.mp4",
