@@ -10,6 +10,7 @@ WEBHOOK_URL = os.environ["WEBHOOK_URL"]
 def main_menu():
     return InlineKeyboardMarkup([
         [InlineKeyboardButton("🏢 ስለ አፓርታማ", callback_data="apartment")],
+        [InlineKeyboardButton("🏠 አፓርታማ ጉብኝት", callback_data="tour")],
         [InlineKeyboardButton("💰 ዋጋ", callback_data="price")],
         [InlineKeyboardButton("📍 አድራሻ", callback_data="location")],
         [InlineKeyboardButton("📞 አግኙን", callback_data="contact")],
@@ -33,11 +34,41 @@ def types_menu():
     ])
 
 
+def back_home():
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton("🏠 Main Menu", callback_data="home")]
+    ])
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "👋 እንኳን ወደ አፓርታማችን በደህና መጡ!\n\n"
         "ከታች ያለውን ምናሌ ይምረጡ።",
         reply_markup=main_menu()
+    )
+
+
+async def send_tour(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    videos = [
+        "videos/19034.mp4",
+        "videos/apartment_tour_1_15sec-2.mp4",
+        "videos/apartment_tour_2_15sec.mp4",
+        "videos/apartment_tour_3_10sec.mp4",
+    ]
+
+    await query.message.reply_text("🏠 የአፓርታማ ጉብኝት 🎥")
+
+    for video in videos:
+        with open(video, "rb") as video_file:
+            await query.message.reply_video(video=video_file)
+
+    await query.message.reply_text(
+        "🏠 የጉብኝቱ መጨረሻ።\n\n"
+        "ለተጨማሪ መረጃ ከታች ይምረጡ።",
+        reply_markup=back_home()
     )
 
 
@@ -50,6 +81,9 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "🏠 Main Menu",
             reply_markup=main_menu()
         )
+
+    elif query.data == "tour":
+        await send_tour(update, context)
 
     elif query.data == "apartment":
         await query.edit_message_text(
@@ -108,9 +142,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(
             "📍 አድራሻ\n\n"
             "ለቡ መብራት።",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("🏠 Main Menu", callback_data="home")]
-            ])
+            reply_markup=back_home()
         )
 
     elif query.data == "contact":
@@ -118,9 +150,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📞 አግኙን\n\n"
             "📱 0969170039\n"
             "💬 Telegram: @Ab2169",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("🏠 Main Menu", callback_data="home")]
-            ])
+            reply_markup=back_home()
         )
 
 
